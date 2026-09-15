@@ -1,0 +1,12 @@
+dist/
+.venv/
+__pycache__/
+*.pyc
+*.log
+**/preferences.ini
+.env
+.env.*
+**/Saved/
+**/Intermediate/
+**/DerivedDataCache/
+tooling/outline-material/Content/
