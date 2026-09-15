@@ -68,5 +68,5 @@ Unreal Editor 4.27. The checked-in paks are the tested Windows SM5 material buil
 CI packages these assets; it does not run Unreal Editor or recook shaders.
 
 CI runs tests and uploads an installable ZIP on pushes and pull requests. Pushing
-a tag matching `VERSION` (for example `v0.6.11`) also creates a **draft** GitHub
+a tag matching `VERSION` (for example `v0.6.12`) also creates a **draft** GitHub
 release containing the ZIP and checksum. Review the draft before publishing.
