@@ -1,0 +1,13 @@
+{
+  "version": "v3.0.1-1127-g2bfa839f",
+  "source": "https://github.com/UE4SS-RE/RE-UE4SS/tree/2bfa839fe2945f9230204145646b5be4ae84fde8",
+  "archive": "UE4SS_v3.0.1-1127-g2bfa839f.zip",
+  "archive_sha256": "29367ce89f3637a537d507f2c79b9d33df3d145c63fd8bb0179f737a5ce46374",
+  "files": {
+    "LICENSE": "99e1d8f8b7cb68e8b2313380ae3b0c8115e39dfbc443fcf21fd67ab74ce1d57e",
+    "UE4SS-settings.ini": "58614ee7b13464c1f5ae0804a35682443c9c3bdc570fe54940e899ae6139b695",
+    "UE4SS.dll": "03c9d35f6a55666839565358edea09f5f11c7929440fe5c809e457d6d527c71f",
+    "dwmapi.dll": "e6dfafa038d0d913b59ba33cbc8412cf73f8eb32bf053f19757a0aff7c453481",
+    "THIRD-PARTY-NOTICES.txt": "5b2b27ca773a0c700020e97956bd27de1f9331df6dceb900a36396d14181e909"
+  }
+}

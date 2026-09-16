@@ -1,0 +1,2 @@
+# Preserve upstream dependency bytes, including original whitespace.
+vendor/ue4ss/** -text -whitespace

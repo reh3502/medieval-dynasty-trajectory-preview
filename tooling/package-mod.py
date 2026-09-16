@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Build a deterministic, installable archive from distributable files."""
 import hashlib
+import argparse
+import json
 from pathlib import Path
 import re
 import zipfile
@@ -8,13 +10,29 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build(output=None):
+def runtime_files():
+    source = ROOT / 'vendor/ue4ss'
+    manifest = json.loads((source / 'manifest.json').read_text())
+    required = {'dwmapi.dll', 'UE4SS.dll', 'UE4SS-settings.ini', 'LICENSE', 'THIRD-PARTY-NOTICES.txt'}
+    if set(manifest['files']) != required:
+        raise ValueError('Unexpected UE4SS runtime manifest')
+    files = {}
+    for name, digest in manifest['files'].items():
+        data = (source / name).read_bytes()
+        if hashlib.sha256(data).hexdigest() != digest:
+            raise ValueError('UE4SS checksum mismatch: ' + name)
+        destination = name if name == 'dwmapi.dll' else 'ue4ss/' + name
+        files['Medieval_Dynasty/Binaries/Win64/' + destination] = data
+    return files
+
+
+def build(output=None, bundled=False):
     version = (ROOT / 'VERSION').read_text().strip()
     if not re.fullmatch(r'\d+\.\d+\.\d+', version):
         raise ValueError('VERSION must contain major.minor.patch')
     output = Path(output) if output else ROOT / 'dist'
     output.mkdir(parents=True, exist_ok=True)
-    files = {}
+    files = runtime_files() if bundled else {}
     source = ROOT / 'mod/TrajectoryPreview'
     prefix = 'Medieval_Dynasty/Binaries/Win64/ue4ss/Mods/TrajectoryPreview/'
     for directory, suffix in [('Scripts', '*.lua'), ('Textures', '*.png')]:
@@ -32,7 +50,8 @@ def build(output=None):
     if len([name for name in files if name.endswith('.pak')]) != 2:
         raise ValueError('Both material paks are required')
     files['README.md'] = (ROOT / 'README.md').read_bytes()
-    archive = output / f'TrajectoryPreview-{version}.zip'
+    variant = '-Bundled' if bundled else ''
+    archive = output / f'TrajectoryPreview-{version}{variant}.zip'
     with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
         for name, data in sorted(files.items()):
             info = zipfile.ZipInfo(name, date_time=(2020, 1, 1, 0, 0, 0))
@@ -45,4 +64,12 @@ def build(output=None):
 
 
 if __name__ == '__main__':
-    print(build())
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--bundled', action='store_true', help='include the pinned UE4SS runtime')
+    parser.add_argument('--all', action='store_true', help='build mod-only and bundled archives')
+    args = parser.parse_args()
+    if args.all:
+        print(build())
+        print(build(bundled=True))
+    else:
+        print(build(bundled=args.bundled))

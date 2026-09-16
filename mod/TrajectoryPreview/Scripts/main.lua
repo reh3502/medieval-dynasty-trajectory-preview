@@ -176,4 +176,4 @@ local loop = LoopInGameThreadWithDelay(250, function()
         last_state=tostring(err)
     end
 end)
-T.log("started", {version="0.6.12", phase="runtime_adapter", key="F8 diagnostic snapshot", engine_tick=EngineTickAvailable})
+T.log("started", {version="0.6.13", phase="runtime_adapter", key="F8 diagnostic snapshot", engine_tick=EngineTickAvailable})

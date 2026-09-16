@@ -21,7 +21,7 @@ jobs:
       - run: python tooling/test-mod.py
       - run: python tooling/test-analyzer.py
       - run: python tooling/test-package.py
-      - run: python tooling/package-mod.py
+      - run: python tooling/package-mod.py --all
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: TrajectoryPreview
@@ -35,14 +35,19 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - name: Check version and package
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: TrajectoryPreview
+          path: dist
+      - name: Check version and release files
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           test "$RELEASE_TAG" = "v$(cat VERSION)"
-          python3 tooling/package-mod.py
-      - name: Create draft release
+          cd dist
+          sha256sum --check *.sha256
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
-        run: gh release create "$RELEASE_TAG" dist/* --verify-tag --draft --title "Trajectory Preview $RELEASE_TAG" --notes "Install the ZIP into the game directory. See the README for requirements and controls."
+        run: gh release create "$RELEASE_TAG" dist/* --verify-tag --title "Trajectory Preview $RELEASE_TAG" --notes "New installation? Download the Bundled ZIP and extract into the game directory. Already have UE4SS? Use the smaller mod-only ZIP to preserve your loader settings. Add -fileopenlog to the Steam launch options for the tested material-loading setup. See the README for details."
